@@ -18,16 +18,10 @@ import ListItemIcon from "@mui/material/ListItemIcon";
 import ListItemText from "@mui/material/ListItemText";
 import InboxIcon from "@mui/icons-material/MoveToInbox";
 import MailIcon from "@mui/icons-material/Mail";
-import Header from "./components/layouts/Header";
-import Menu from "./components/layouts/Menu";
-import { Link, Navigate, Route, RouteProps, Routes } from "react-router-dom";
-import LoginPage from "./components/pages/LoginPage";
-import RegisterPage from "./components/pages/RegisterPage";
-import StockCreatePage from "./components/pages/StockCreatePage";
-import StockPage from "./components/pages/StockPage";
-import StockEditPage from "./components/pages/StockEditPage";
-import ReportPage from "./components/pages/ReportPage";
-import AboutUs from "./components/pages/AboutUs";
+import { Badge } from "@mui/material";
+import Mail from "@mui/icons-material/Mail";
+import Notification from "@mui/icons-material/Notifications";
+import AccountCircle from "@mui/icons-material/AccountCircle";
 
 const drawerWidth = 240;
 
@@ -80,44 +74,65 @@ const DrawerHeader = styled("div")(({ theme }) => ({
   justifyContent: "flex-end",
 }));
 
-export default function App() {
+type HeaderProp = {
+  open: boolean;
+  onDrawerOpen: () => void;
+};
+
+export default function Header({ open, onDrawerOpen }: HeaderProp) {
   const theme = useTheme();
-  const [open, setOpen] = React.useState(true);
 
   const handleDrawerOpen = () => {
-    setOpen(true);
-  };
-
-  const handleDrawerClose = () => {
-    setOpen(false);
+    onDrawerOpen();
   };
 
   return (
-    <Box sx={{ display: "flex" }}>
-      <CssBaseline />
-      <Header open={open} onDrawerOpen={handleDrawerOpen} />
-      <Menu open={open} onDrawerClose={handleDrawerClose} />
-      <Main open={open}>
-        <DrawerHeader />
-        <Routes>
-          <Route path="/login" element={<LoginPage />} />
-          <Route path="/register" element={<RegisterPage />} />
-          <Route path="/stock" element={<StockPage />} />
-          <Route path="/stock/create" element={<StockCreatePage />} />
-          <Route path="/stock/edit/:id" element={<StockEditPage />} />
-          <Route path="/report" element={<ReportPage />} />
-          <Route path="/aboutus" element={<AboutUs />} />
-          <Route path="/" element={<Navigate to="/login" />} />
-          <Route path="*" element={<NotFound />} />
-        </Routes>
-      </Main>
-    </Box>
+    <AppBar position="fixed" open={open}>
+      <Toolbar>
+        <IconButton
+          color="inherit"
+          aria-label="open drawer"
+          onClick={handleDrawerOpen}
+          edge="start"
+          sx={{ mr: 2, ...(open && { display: "none" }) }}
+        >
+          <MenuIcon />
+        </IconButton>
+        <Typography variant="h6" noWrap component="div">
+          Stock Workshop - [ReactJS - Typescript]
+        </Typography>
+
+        <Box sx={{ flexGrow: 1 }} />
+        <Box sx={{ display: { xs: "none", md: "flex" } }}>
+          <IconButton
+            size="large"
+            aria-label="show 4 new mails"
+            color="inherit"
+          >
+            <Badge badgeContent={4} color="error">
+              <Mail />
+            </Badge>
+          </IconButton>
+          <IconButton
+            size="large"
+            aria-label="show 17 new notifications"
+            color="inherit"
+          >
+            <Badge badgeContent={4} color="error">
+              <Notification />{" "}
+            </Badge>
+          </IconButton>
+          <IconButton
+            size="large"
+            aria-label="account of current user"
+            color="inherit"
+            onClick={() => alert('Logout')}
+           
+          >
+            <AccountCircle />
+          </IconButton>
+        </Box>
+      </Toolbar>
+    </AppBar>
   );
 }
-
-const NotFound = () => (
-  <div>
-    <h1>404 Not Found!</h1>
-    <Link to="/">Go Home</Link>
-  </div>
-);
