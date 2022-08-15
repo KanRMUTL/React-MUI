@@ -1,5 +1,10 @@
 import * as React from "react";
-import { styled, useTheme } from "@mui/material/styles";
+import {
+  ThemeProvider,
+  styled,
+  useTheme,
+  createTheme,
+} from "@mui/material/styles";
 import Box from "@mui/material/Box";
 import Drawer from "@mui/material/Drawer";
 import CssBaseline from "@mui/material/CssBaseline";
@@ -50,6 +55,24 @@ const Main = styled("main", { shouldForwardProp: (prop) => prop !== "open" })<{
   }),
 }));
 
+const theme = createTheme({
+  components: {
+    MuiDrawer: {
+      styleOverrides: {
+        paper: {
+          background: `url(${process.env.PUBLIC_URL}/images/background_menu.jpg)`,
+          width: drawerWidth,
+        },
+      },
+    },
+  },
+  palette: {
+    background: {
+      default: "#CFD2D6",
+    },
+  },
+});
+
 interface AppBarProps extends MuiAppBarProps {
   open?: boolean;
 }
@@ -81,7 +104,6 @@ const DrawerHeader = styled("div")(({ theme }) => ({
 }));
 
 export default function App() {
-  const theme = useTheme();
   const [open, setOpen] = React.useState(true);
 
   const handleDrawerOpen = () => {
@@ -93,25 +115,27 @@ export default function App() {
   };
 
   return (
-    <Box sx={{ display: "flex" }}>
-      <CssBaseline />
-      <Header open={open} onDrawerOpen={handleDrawerOpen} />
-      <Menu open={open} onDrawerClose={handleDrawerClose} />
-      <Main open={open}>
-        <DrawerHeader />
-        <Routes>
-          <Route path="/login" element={<LoginPage />} />
-          <Route path="/register" element={<RegisterPage />} />
-          <Route path="/stock" element={<StockPage />} />
-          <Route path="/stock/create" element={<StockCreatePage />} />
-          <Route path="/stock/edit/:id" element={<StockEditPage />} />
-          <Route path="/report" element={<ReportPage />} />
-          <Route path="/aboutus" element={<AboutUs />} />
-          <Route path="/" element={<Navigate to="/login" />} />
-          <Route path="*" element={<NotFound />} />
-        </Routes>
-      </Main>
-    </Box>
+    <ThemeProvider theme={theme}>
+      <Box sx={{ display: "flex" }}>
+        <CssBaseline />
+        <Header open={open} onDrawerOpen={handleDrawerOpen} />
+        <Menu open={open} onDrawerClose={handleDrawerClose} />
+        <Main open={open}>
+          <DrawerHeader />
+          <Routes>
+            <Route path="/login" element={<LoginPage />} />
+            <Route path="/register" element={<RegisterPage />} />
+            <Route path="/stock" element={<StockPage />} />
+            <Route path="/stock/create" element={<StockCreatePage />} />
+            <Route path="/stock/edit/:id" element={<StockEditPage />} />
+            <Route path="/report" element={<ReportPage />} />
+            <Route path="/aboutus" element={<AboutUs />} />
+            <Route path="/" element={<Navigate to="/login" />} />
+            <Route path="*" element={<NotFound />} />
+          </Routes>
+        </Main>
+      </Box>
+    </ThemeProvider>
   );
 }
 
