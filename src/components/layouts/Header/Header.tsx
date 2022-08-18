@@ -22,6 +22,7 @@ import { Badge } from "@mui/material";
 import Mail from "@mui/icons-material/Mail";
 import Notification from "@mui/icons-material/Notifications";
 import AccountCircle from "@mui/icons-material/AccountCircle";
+import { useNavigate } from "react-router-dom";
 
 const drawerWidth = 240;
 
@@ -80,8 +81,7 @@ type HeaderProp = {
 };
 
 export default function Header({ open, onDrawerOpen }: HeaderProp) {
-  const theme = useTheme();
-
+  const navigate = useNavigate()
   const handleDrawerOpen = () => {
     onDrawerOpen();
   };
@@ -126,8 +126,8 @@ export default function Header({ open, onDrawerOpen }: HeaderProp) {
             size="large"
             aria-label="account of current user"
             color="inherit"
-            onClick={() => alert('Logout')}
-           
+            onClick={() => navigate('/login')}
+            
           >
             <AccountCircle />
           </IconButton>

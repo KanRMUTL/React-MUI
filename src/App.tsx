@@ -33,6 +33,7 @@ import StockPage from "./components/pages/StockPage";
 import StockEditPage from "./components/pages/StockEditPage";
 import ReportPage from "./components/pages/ReportPage";
 import AboutUs from "./components/pages/AboutUs";
+import { blue } from "@mui/material/colors";
 
 const drawerWidth = 240;
 
@@ -66,10 +67,16 @@ const theme = createTheme({
       },
     },
   },
+  typography: {
+    fontFamily: "Source Sans Pro",
+    fontWeightLight: 200,
+    fontWeightRegular: 300,
+    fontWeightMedium: 400,
+    fontWeightBold: 700,
+  },
+  spacing: 5,
   palette: {
-    background: {
-      default: "#CFD2D6",
-    },
+    primary: blue,
   },
 });
 
