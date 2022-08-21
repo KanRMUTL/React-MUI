@@ -1,6 +1,16 @@
 import * as React from "react";
 import { useNavigate } from "react-router-dom";
 import { Formik, FormikProps } from "formik";
+import {
+  Box,
+  Button,
+  Card,
+  CardContent,
+  TextField,
+  Theme,
+  Typography,
+} from "@mui/material";
+import { Stack, SxProps } from "@mui/system";
 
 type RegisterPageProps = {
   //
@@ -8,6 +18,10 @@ type RegisterPageProps = {
 
 const RegisterPage: React.FC<any> = () => {
   const navigate = useNavigate();
+  const classes: SxProps<Theme> | any = {
+    root: { display: "flex", justifyContent: "center" },
+    buttons: {marginTop: 2}
+  };
 
   const ShowForm = ({
     handleSubmit,
@@ -17,17 +31,26 @@ const RegisterPage: React.FC<any> = () => {
   }: FormikProps<any>) => {
     return (
       <form onSubmit={handleSubmit}>
-        <label>Username: </label>
-        <input
-          type="text"
+        <TextField
+          variant="outlined"
+          margin="normal"
+          required
+          fullWidth
+          label="Username"
           name="username"
           id="username"
           onChange={handleChange}
           value={values.username}
+          autoComplete="email"
+          autoFocus
         />
         <br />
-        <label>Password: </label>
-        <input
+        <TextField
+          variant="outlined"
+          margin="normal"
+          required
+          fullWidth
+          label="Password"
           type="password"
           name="password"
           id="password"
@@ -35,26 +58,51 @@ const RegisterPage: React.FC<any> = () => {
           value={values.password}
         />
         <br />
-        <button type="submit" disabled={isSubmitting}>
-          Submit
-        </button>
-        <button onClick={() => navigate(-1)}>Back</button>
+        <Stack direction="row" spacing={2} sx={classes.buttons}>
+          <Button
+            onClick={() => navigate("/login")}
+            type="button"
+            fullWidth
+            variant="outlined"
+            color="primary"
+            disabled={isSubmitting}
+          >
+            Cancel
+          </Button>
+          <Button
+            type="submit"
+            fullWidth
+            variant="contained"
+            color="primary"
+            disabled={isSubmitting}
+          >
+            Create
+          </Button>
+        </Stack>
       </form>
     );
   };
 
   return (
     <>
-      <h1>RegisterPage</h1>
-      <Formik
-        onSubmit={(values, { setSubmitting }) => {
-          alert(JSON.stringify(values));
-          setTimeout(() => setSubmitting(false), 1000);
-        }}
-        initialValues={{ username: "", password: "" }}
-      >
-        {(props) => ShowForm(props)}
-      </Formik>
+      <Box sx={classes.root}>
+        <Card sx={{ minWidth: 345 }}>
+          <CardContent>
+            <Typography gutterBottom variant="h5" component="h2">
+              Register
+            </Typography>
+            <Formik
+              onSubmit={(values, { setSubmitting }) => {
+                alert(JSON.stringify(values));
+                setTimeout(() => setSubmitting(false), 1000);
+              }}
+              initialValues={{ username: "", password: "" }}
+            >
+              {(props) => ShowForm(props)}
+            </Formik>
+          </CardContent>
+        </Card>
+      </Box>
     </>
   );
 };
