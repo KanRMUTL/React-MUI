@@ -11,6 +11,7 @@ import {
   Typography,
 } from "@mui/material";
 import { Stack, SxProps } from "@mui/system";
+import { User } from "../../../types/user.type";
 
 type LoginPageProps = {
   //
@@ -20,7 +21,7 @@ const LoginPage: React.FC<any> = () => {
   const navigate = useNavigate();
   const classes: SxProps<Theme> | any = {
     root: { display: "flex", justifyContent: "center" },
-    buttons: {marginTop: 2}
+    buttons: { marginTop: 2 },
   };
 
   const ShowForm = ({
@@ -28,7 +29,7 @@ const LoginPage: React.FC<any> = () => {
     handleChange,
     isSubmitting,
     values,
-  }: FormikProps<any>) => {
+  }: FormikProps<User>) => {
     return (
       <form onSubmit={handleSubmit}>
         <TextField
@@ -60,7 +61,7 @@ const LoginPage: React.FC<any> = () => {
         <br />
         <Stack direction="row" spacing={2} sx={classes.buttons}>
           <Button
-            onClick={() => navigate('/register')}
+            onClick={() => navigate("/register")}
             type="button"
             fullWidth
             variant="outlined"
@@ -83,6 +84,8 @@ const LoginPage: React.FC<any> = () => {
     );
   };
 
+  const initialUser: User = { username: "admin", password: "1234" };
+
   return (
     <>
       <Box sx={classes.root}>
@@ -96,7 +99,7 @@ const LoginPage: React.FC<any> = () => {
                 alert(JSON.stringify(values));
                 setTimeout(() => setSubmitting(false), 1000);
               }}
-              initialValues={{ username: "", password: "" }}
+              initialValues={initialUser}
             >
               {(props) => ShowForm(props)}
             </Formik>
