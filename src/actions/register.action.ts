@@ -31,6 +31,7 @@ export const register = (user: User, navigate: any) => {
       const result = await httpClient.post(server.REGISTER_URL, user);
       if (result.data.result === OK) {
         dispatch(setRegisterSuccessToState(result.data));
+        alert("Register Success");
         navigate("/login");
       } else {
         dispatch(setRegisterFailedToState());
