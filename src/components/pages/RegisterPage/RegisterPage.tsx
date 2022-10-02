@@ -9,17 +9,24 @@ import {
   TextField,
   Theme,
   Typography,
+  Alert,
 } from "@mui/material";
 import { Stack, SxProps } from "@mui/system";
 import { User } from "../../../types/user.type";
-import {httpClient} from '../../../utils/httpclient'
-import { server } from "../../../Constants";
+import * as registerActions from "../../../actions/register.action";
+import { useDispatch, useSelector } from "react-redux";
+import { RootReducers } from "../../../reducers";
 
 type RegisterPageProps = {
   //
 };
 
 const RegisterPage: React.FC<any> = () => {
+  const registerReducer = useSelector(
+    (state: RootReducers) => state.registerReducer
+  );
+  const dispatch = useDispatch();
+
   const navigate = useNavigate();
   const classes: SxProps<Theme> | any = {
     root: { display: "flex", justifyContent: "center" },
@@ -61,6 +68,11 @@ const RegisterPage: React.FC<any> = () => {
           value={values.password}
         />
         <br />
+
+        {registerReducer.isError && (
+          <Alert severity="error">Register failed.</Alert>
+        )}
+
         <Stack direction="row" spacing={2} sx={classes.buttons}>
           <Button
             onClick={() => navigate("/login")}
@@ -86,7 +98,7 @@ const RegisterPage: React.FC<any> = () => {
     );
   };
 
-  const initialUser: User = { username: "admin", password: "1234" };
+  const initialUser: User = { username: "", password: "" };
 
   return (
     <>
@@ -98,9 +110,7 @@ const RegisterPage: React.FC<any> = () => {
             </Typography>
             <Formik
               onSubmit={async (values, { setSubmitting }) => {
-               const result = await httpClient.post(server.REGISTER_URL, values)
-               console.log(result);
-               
+                dispatch(registerActions.register(values, navigate));
               }}
               initialValues={initialUser}
             >

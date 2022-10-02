@@ -84,7 +84,7 @@ const LoginPage: React.FC<any> = () => {
     );
   };
 
-  const initialUser: User = { username: "admin", password: "1234" };
+  const initialUser: User = { username: "", password: "" };
 
   return (
     <>

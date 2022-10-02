@@ -3,6 +3,6 @@ import registerReducer, { RegisterState } from './register.reducer'
 
 export default combineReducers({registerReducer})
 
-export interface RootREducers {
+export interface RootReducers {
     registerReducer: RegisterState
 }
