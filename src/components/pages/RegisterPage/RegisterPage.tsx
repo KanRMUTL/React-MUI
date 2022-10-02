@@ -12,6 +12,8 @@ import {
 } from "@mui/material";
 import { Stack, SxProps } from "@mui/system";
 import { User } from "../../../types/user.type";
+import {httpClient} from '../../../utils/httpclient'
+import { server } from "../../../Constants";
 
 type RegisterPageProps = {
   //
@@ -95,9 +97,10 @@ const RegisterPage: React.FC<any> = () => {
               Register
             </Typography>
             <Formik
-              onSubmit={(values, { setSubmitting }) => {
-                alert(JSON.stringify(values));
-                setTimeout(() => setSubmitting(false), 1000);
+              onSubmit={async (values, { setSubmitting }) => {
+               const result = await httpClient.post(server.REGISTER_URL, values)
+               console.log(result);
+               
               }}
               initialValues={initialUser}
             >
