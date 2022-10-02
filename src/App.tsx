@@ -2,30 +2,16 @@ import * as React from "react";
 import {
   ThemeProvider,
   styled,
-  useTheme,
+
   createTheme,
 } from "@mui/material/styles";
 import Box from "@mui/material/Box";
-import Drawer from "@mui/material/Drawer";
 import CssBaseline from "@mui/material/CssBaseline";
 import MuiAppBar, { AppBarProps as MuiAppBarProps } from "@mui/material/AppBar";
-import Toolbar from "@mui/material/Toolbar";
-import List from "@mui/material/List";
-import Typography from "@mui/material/Typography";
-import Divider from "@mui/material/Divider";
-import IconButton from "@mui/material/IconButton";
-import MenuIcon from "@mui/icons-material/Menu";
-import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
-import ChevronRightIcon from "@mui/icons-material/ChevronRight";
-import ListItem from "@mui/material/ListItem";
-import ListItemButton from "@mui/material/ListItemButton";
-import ListItemIcon from "@mui/material/ListItemIcon";
-import ListItemText from "@mui/material/ListItemText";
-import InboxIcon from "@mui/icons-material/MoveToInbox";
-import MailIcon from "@mui/icons-material/Mail";
+
 import Header from "./components/layouts/Header";
 import Menu from "./components/layouts/Menu";
-import { Link, Navigate, Route, RouteProps, Routes } from "react-router-dom";
+import { Link, Navigate, Route, Routes } from "react-router-dom";
 import LoginPage from "./components/pages/LoginPage";
 import RegisterPage from "./components/pages/RegisterPage";
 import StockCreatePage from "./components/pages/StockCreatePage";
@@ -34,6 +20,9 @@ import StockEditPage from "./components/pages/StockEditPage";
 import ReportPage from "./components/pages/ReportPage";
 import AboutUs from "./components/pages/AboutUs";
 import { blue } from "@mui/material/colors";
+import { useDispatch, useSelector } from "react-redux";
+import { RootReducers } from "./reducers";
+import * as loginActions from './actions/login.action'
 
 const drawerWidth = 240;
 
@@ -112,7 +101,8 @@ const DrawerHeader = styled("div")(({ theme }) => ({
 
 export default function App() {
   const [open, setOpen] = React.useState(true);
-
+  const loginReducer = useSelector((state: RootReducers) => state.loginReducer)
+  const dispatch = useDispatch()
   const handleDrawerOpen = () => {
     setOpen(true);
   };
@@ -121,12 +111,16 @@ export default function App() {
     setOpen(false);
   };
 
+  React.useEffect(() => {
+    dispatch(loginActions.restoreLogin())
+  },[])
+
   return (
     <ThemeProvider theme={theme}>
       <Box sx={{ display: "flex" }}>
         <CssBaseline />
-        <Header open={open} onDrawerOpen={handleDrawerOpen} />
-        <Menu open={open} onDrawerClose={handleDrawerClose} />
+       {loginReducer.result && <Header open={open} onDrawerOpen={handleDrawerOpen} />} 
+        {loginReducer.result && <Menu open={open} onDrawerClose={handleDrawerClose} /> }
         <Main open={open}>
           <DrawerHeader />
           <Routes>
