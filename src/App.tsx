@@ -97,7 +97,7 @@ const DrawerHeader = styled("div")(({ theme }) => ({
 }));
 
 export default function App() {
-  const [open, setOpen] = React.useState(true);
+  const [open, setOpen] = React.useState(false);
   const loginReducer = useSelector((state: RootReducers) => state.loginReducer);
   const dispatch = useDispatch();
   const handleDrawerOpen = () => {
