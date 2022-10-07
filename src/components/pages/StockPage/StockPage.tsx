@@ -1,17 +1,19 @@
 import * as React from "react";
-import { DataGrid, GridColDef, GridRenderCellParams, GridToolbarQuickFilter } from "@mui/x-data-grid";
+import { DataGrid, GridColDef, GridRenderCellParams } from "@mui/x-data-grid";
 import { imageUrl } from "../../../Constants";
 import * as stockActions from "../../../actions/stock.action";
 import { useDispatch, useSelector } from "react-redux";
 import { RootReducers } from "../../../reducers";
-import { Box, Fab, IconButton, Typography } from "@mui/material";
+import { Box, Fab, IconButton, TextField, Typography } from "@mui/material";
 import NumberFormat from "react-number-format";
 import { Stack } from "@mui/system";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
+import Add from "@mui/icons-material/Add";
 import Moment from "react-moment";
-import { Add } from "@mui/icons-material";
 import { Link } from "react-router-dom";
+import ClearIcon from "@mui/icons-material/Clear";
+import SearchIcon from "@mui/icons-material/Search";
 
 const stockColumns: GridColDef[] = [
   {
@@ -80,7 +82,7 @@ const stockColumns: GridColDef[] = [
   },
 ];
 
-function QuickSearchToolbar() {
+const QuickSearchToolbar = ({ onChange }: any) => {
   return (
     <Box
       sx={{
@@ -88,13 +90,18 @@ function QuickSearchToolbar() {
         pb: 0,
       }}
     >
-      <GridToolbarQuickFilter
-        quickFilterParser={(searchInput: string) =>
-          searchInput
-            .split(',')
-            .map((value) => value.trim())
-            .filter((value) => value !== '')
-        }
+      <TextField
+        variant="standard"
+        onChange={onChange}
+        placeholder="Search…"
+        InputProps={{
+          startAdornment: <SearchIcon fontSize="small" />,
+          endAdornment: (
+            <IconButton title="Clear" aria-label="Clear" size="small">
+              <ClearIcon fontSize="small" />
+            </IconButton>
+          ),
+        }}
       />
       <Fab
         color="primary"
@@ -103,16 +110,16 @@ function QuickSearchToolbar() {
         to="/stock/create"
         size="small"
         sx={{
-          position: 'absolute',
+          position: "absolute",
           top: 10,
-          right: 10
+          right: 10,
         }}
       >
-        <Add/>
+        <Add />
       </Fab>
     </Box>
   );
-}
+};
 
 export default function StockPage() {
   const stockReducer = useSelector((state: RootReducers) => state.stockReducer);
@@ -127,6 +134,13 @@ export default function StockPage() {
       <DataGrid
         components={{
           Toolbar: QuickSearchToolbar,
+        }}
+        componentsProps={{
+          toolbar: {
+            onChange: (e: React.ChangeEvent<HTMLInputElement>) => {
+              dispatch(stockActions.loadStockByKeyword(e.target.value));
+            },
+          },
         }}
         sx={{ backgroundColor: "white", height: "70vh" }}
         rows={stockReducer.result}
