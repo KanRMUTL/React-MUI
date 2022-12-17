@@ -14,7 +14,7 @@ import Moment from "react-moment";
 import { Link } from "react-router-dom";
 import ClearIcon from "@mui/icons-material/Clear";
 import SearchIcon from "@mui/icons-material/Search";
-
+import { useDebounce } from "@react-hook/debounce";
 const stockColumns: GridColDef[] = [
   {
     headerName: "ID",
@@ -82,7 +82,7 @@ const stockColumns: GridColDef[] = [
   },
 ];
 
-const QuickSearchToolbar = ({ onChange }: any) => {
+const QuickSearchToolbar = ({ onChange, value, clearSearch }: any) => {
   return (
     <Box
       sx={{
@@ -92,12 +92,19 @@ const QuickSearchToolbar = ({ onChange }: any) => {
     >
       <TextField
         variant="standard"
+        value={value}
         onChange={onChange}
         placeholder="Search…"
         InputProps={{
           startAdornment: <SearchIcon fontSize="small" />,
           endAdornment: (
-            <IconButton title="Clear" aria-label="Clear" size="small">
+            <IconButton
+              title="Clear"
+              aria-label="Clear"
+              size="small"
+              onClick={clearSearch}
+              style={{ visibility: value ? "visible" : "hidden" }}
+            >
               <ClearIcon fontSize="small" />
             </IconButton>
           ),
@@ -124,6 +131,12 @@ const QuickSearchToolbar = ({ onChange }: any) => {
 export default function StockPage() {
   const stockReducer = useSelector((state: RootReducers) => state.stockReducer);
   const dispatch = useDispatch();
+  const [keywordSearch, setKeywordSearch] = useDebounce("", 1000);
+  const [keywordSearchNoDelay, setKeywordSearchNoDelay] = React.useState("");
+
+  React.useEffect(() => {
+    dispatch(stockActions.loadStockByKeyword(keywordSearch));
+  }, [keywordSearch]);
 
   React.useEffect(() => {
     dispatch(stockActions.loadStock());
@@ -137,8 +150,14 @@ export default function StockPage() {
         }}
         componentsProps={{
           toolbar: {
+            value: keywordSearchNoDelay,
             onChange: (e: React.ChangeEvent<HTMLInputElement>) => {
-              dispatch(stockActions.loadStockByKeyword(e.target.value));
+              setKeywordSearch(e.target.value);
+              setKeywordSearchNoDelay(e.target.value);
+            },
+            clearSearch: () => {
+              setKeywordSearch("");
+              setKeywordSearchNoDelay("");
             },
           },
         }}
