@@ -10,13 +10,12 @@ import {
 } from "@mui/material";
 import { TextField } from "formik-material-ui";
 import { Box } from "@mui/system";
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import * as stockActions from "../../../actions/stock.action";
 import { useDispatch } from "react-redux";
 
 const StockCreatePage: React.FC<any> = () => {
   const dispatch = useDispatch();
-  const navigate = useNavigate();
 
   const showPreviewImage = (values: any) => {
     return (
@@ -57,7 +56,7 @@ const StockCreatePage: React.FC<any> = () => {
               style={{ marginTop: 16 }}
               fullWidth
               component={TextField}
-              name="price"
+              name="stock"
               type="number"
               label="Stock"
             />
@@ -121,6 +120,13 @@ const StockCreatePage: React.FC<any> = () => {
     <Box>
       <Formik
         initialValues={initialValues}
+        validate={(value) => {
+          let error: any = {};
+          if (!value.name) error.name = "Please Enter Product Name";
+          if (value.price < 10) error.price = "Price is not lower than 10";
+          if (value.stock < 10) error.stock = "Stock is not lower than 10";
+          return error;
+        }}
         onSubmit={(values, { setSubmitting }) => {
           let formData = new FormData();
           formData.append("name", values.name);
