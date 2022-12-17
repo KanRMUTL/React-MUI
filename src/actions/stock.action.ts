@@ -40,7 +40,7 @@ export const loadStockByKeyword = (keyword: string) => {
       );
       dispatch(setStockSuccessToState(result.data));
     } else {
-      doGetProducts(dispatch)
+      doGetProducts(dispatch);
     }
   };
 };
@@ -52,4 +52,19 @@ const doGetProducts = async (dispatch: any) => {
   } catch (error) {
     dispatch(setStockFailedToState());
   }
+};
+
+export const addProduct = (formData: FormData, history: any) => {
+  return async (dispatch: any) => {
+    await httpClient.post(server.PRODUCT_URL, formData);
+    history.back();
+  };
+};
+
+export const deleteProduct = (id: string) => {
+  return async (dispatch: any) => {
+    dispatch(setStockFetchingToState());
+    await httpClient.delete(`${server.PRODUCT_URL}/${id}`);
+    await doGetProducts(dispatch);
+  };
 };
