@@ -10,19 +10,25 @@ import {
 } from "@mui/material";
 import { TextField } from "formik-material-ui";
 import { Box } from "@mui/system";
-import { Link } from "react-router-dom";
-
-type StockCreatePageProps = {
-  //
-};
+import { Link, useNavigate } from "react-router-dom";
+import * as stockActions from "../../../actions/stock.action";
+import { useDispatch } from "react-redux";
 
 const StockCreatePage: React.FC<any> = () => {
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+
   const showPreviewImage = (values: any) => {
     return (
       values.file_obj && <img src={values.file_obj} style={{ height: 100 }} />
     );
   };
-  const ShowForm = ({ values, setFieldValue }: FormikProps<Product>) => {
+
+  const ShowForm = ({
+    values,
+    setFieldValue,
+    isSubmitting,
+  }: FormikProps<Product>) => {
     return (
       <Form>
         <Card>
@@ -87,6 +93,7 @@ const StockCreatePage: React.FC<any> = () => {
 
           <CardActions>
             <Button
+              disabled={isSubmitting}
               fullWidth
               variant="contained"
               color="primary"
@@ -109,12 +116,19 @@ const StockCreatePage: React.FC<any> = () => {
     stock: 2000,
     price: 3000,
   };
+
   return (
     <Box>
       <Formik
         initialValues={initialValues}
-        onSubmit={(values, {}) => {
-          alert(JSON.stringify(values));
+        onSubmit={(values, { setSubmitting }) => {
+          let formData = new FormData();
+          formData.append("name", values.name);
+          formData.append("price", String(values.price));
+          formData.append("stock", String(values.stock));
+          formData.append("image", values.file);
+          dispatch(stockActions.addProduct(formData));
+          setSubmitting(false);
         }}
       >
         {(props: any) => ShowForm(props)}
