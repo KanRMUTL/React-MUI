@@ -4,7 +4,19 @@ import { imageUrl } from "../../../Constants";
 import * as stockActions from "../../../actions/stock.action";
 import { useDispatch, useSelector } from "react-redux";
 import { RootReducers } from "../../../reducers";
-import { Box, Fab, IconButton, TextField, Typography } from "@mui/material";
+import {
+  Box,
+  Button,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogContentText,
+  DialogTitle,
+  Fab,
+  IconButton,
+  TextField,
+  Typography,
+} from "@mui/material";
 import NumberFormat from "react-number-format";
 import { Stack } from "@mui/system";
 import EditIcon from "@mui/icons-material/Edit";
@@ -15,72 +27,7 @@ import { Link } from "react-router-dom";
 import ClearIcon from "@mui/icons-material/Clear";
 import SearchIcon from "@mui/icons-material/Search";
 import { useDebounce } from "@react-hook/debounce";
-const stockColumns: GridColDef[] = [
-  {
-    headerName: "ID",
-    field: "product_id",
-    width: 50,
-  },
-  {
-    headerName: "IMG",
-    field: "image",
-    width: 80,
-    renderCell: ({ value }: GridRenderCellParams<string>) => (
-      <img
-        alt=""
-        src={`${imageUrl}/images/${value}?dummy=${Math.random()}`}
-        style={{ width: 70, height: 70, borderRadius: "5%" }}
-      />
-    ),
-  },
-  {
-    headerName: "NAME",
-    field: "name",
-    width: 250,
-  },
-  {
-    headerName: "STOCK",
-    field: "stock",
-    width: 120,
-    renderCell: ({ value }: GridRenderCellParams<string>) => (
-      <Typography variant="body1">
-        <NumberFormat
-          value={value}
-          displayType="text"
-          thousandSeparator={true}
-          decimalScale={0}
-          fixedDecimalScale={true}
-          prefix="฿"
-        />
-      </Typography>
-    ),
-  },
-  {
-    headerName: "TIME",
-    field: "createdAt",
-    width: 120,
-    renderCell: ({ value }: GridRenderCellParams<string>) => (
-      <Typography variant="body1">
-        <Moment format="DD/MM/YYYY HH:mm">{value}</Moment>
-      </Typography>
-    ),
-  },
-  {
-    headerName: "ACTION",
-    field: ".",
-    width: 120,
-    renderCell: ({ row }: GridRenderCellParams<string>) => (
-      <Stack direction="row">
-        <IconButton aria-label="edit" size="large" onClick={() => {}}>
-          <EditIcon fontSize="inherit" />
-        </IconButton>
-        <IconButton aria-label="edit" size="large" onClick={() => {}}>
-          <DeleteIcon fontSize="inherit" />
-        </IconButton>
-      </Stack>
-    ),
-  },
-];
+import { Product } from "../../../types/product.type";
 
 const QuickSearchToolbar = ({ onChange, value, clearSearch }: any) => {
   return (
@@ -133,6 +80,16 @@ export default function StockPage() {
   const dispatch = useDispatch();
   const [keywordSearch, setKeywordSearch] = useDebounce("", 1000);
   const [keywordSearchNoDelay, setKeywordSearchNoDelay] = React.useState("");
+  const [selectedProduct, setSelectedProduct] = React.useState<Product | null>(
+    null
+  );
+  const [openDialog, setOpenDialog] = React.useState(false);
+
+  const handleDeleteConfirm = () => {
+    dispatch(stockActions.deleteProduct(String(selectedProduct?.id)));
+    dispatch(stockActions.loadStock());
+    setOpenDialog(false);
+  };
 
   React.useEffect(() => {
     dispatch(stockActions.loadStockByKeyword(keywordSearch));
@@ -141,6 +98,108 @@ export default function StockPage() {
   React.useEffect(() => {
     dispatch(stockActions.loadStock());
   }, []);
+
+  const stockColumns: GridColDef[] = [
+    {
+      headerName: "ID",
+      field: "product_id",
+      width: 50,
+    },
+    {
+      headerName: "IMG",
+      field: "image",
+      width: 80,
+      renderCell: ({ value }: GridRenderCellParams<string>) => (
+        <img
+          alt=""
+          src={`${imageUrl}/images/${value}?dummy=${Math.random()}`}
+          style={{ width: 70, height: 70, borderRadius: "5%" }}
+        />
+      ),
+    },
+    {
+      headerName: "NAME",
+      field: "name",
+      width: 250,
+    },
+    {
+      headerName: "STOCK",
+      field: "stock",
+      width: 120,
+      renderCell: ({ value }: GridRenderCellParams<string>) => (
+        <Typography variant="body1">
+          <NumberFormat
+            value={value}
+            displayType="text"
+            thousandSeparator={true}
+            decimalScale={0}
+            fixedDecimalScale={true}
+            prefix="฿"
+          />
+        </Typography>
+      ),
+    },
+    {
+      headerName: "TIME",
+      field: "createdAt",
+      width: 120,
+      renderCell: ({ value }: GridRenderCellParams<string>) => (
+        <Typography variant="body1">
+          <Moment format="DD/MM/YYYY HH:mm">{value}</Moment>
+        </Typography>
+      ),
+    },
+    {
+      headerName: "ACTION",
+      field: ".",
+      width: 120,
+      renderCell: ({ row }: GridRenderCellParams<string>) => (
+        <Stack direction="row">
+          <IconButton aria-label="edit" size="large" onClick={() => {}}>
+            <EditIcon fontSize="inherit" />
+          </IconButton>
+          <IconButton
+            aria-label="edit"
+            size="large"
+            onClick={() => {
+              setSelectedProduct(row);
+            }}
+          >
+            <DeleteIcon fontSize="inherit" />
+          </IconButton>
+        </Stack>
+      ),
+    },
+  ];
+
+  const productImageUrl = `${imageUrl}/images/${
+    selectedProduct?.image
+  }?dummy=${Math.random()}`;
+
+  const showDialog = () => {
+    return (
+      <Dialog open={openDialog} keepMounted onClose={() => {}}>
+        <DialogTitle>
+          <img
+            src={productImageUrl}
+            style={{ width: 100, borderRadius: "5%" }}
+            alt=""
+          />
+          <br />
+          Confirm delete product : {selectedProduct?.name}
+        </DialogTitle>
+        <DialogContent>
+          <DialogContentText>
+            You can not restore deleted product
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => setOpenDialog(false)}>Cancel</Button>
+          <Button onClick={handleDeleteConfirm}>OK</Button>
+        </DialogActions>
+      </Dialog>
+    );
+  };
 
   return (
     <Box>
@@ -168,6 +227,7 @@ export default function StockPage() {
         rowsPerPageOptions={[10]}
         checkboxSelection
       />
+      {showDialog()}
     </Box>
   );
 }
