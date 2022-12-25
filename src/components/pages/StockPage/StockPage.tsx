@@ -23,7 +23,7 @@ import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
 import Add from "@mui/icons-material/Add";
 import Moment from "react-moment";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import ClearIcon from "@mui/icons-material/Clear";
 import SearchIcon from "@mui/icons-material/Search";
 import { useDebounce } from "@react-hook/debounce";
@@ -78,6 +78,7 @@ const QuickSearchToolbar = ({ onChange, value, clearSearch }: any) => {
 export default function StockPage() {
   const stockReducer = useSelector((state: RootReducers) => state.stockReducer);
   const dispatch = useDispatch();
+  const navigate = useNavigate()
   const [keywordSearch, setKeywordSearch] = useDebounce("", 1000);
   const [keywordSearchNoDelay, setKeywordSearchNoDelay] = React.useState("");
   const [selectedProduct, setSelectedProduct] = React.useState<Product | null>(
@@ -87,7 +88,6 @@ export default function StockPage() {
 
   const handleDeleteConfirm = () => {
     dispatch(stockActions.deleteProduct(String(selectedProduct?.id)));
-    dispatch(stockActions.loadStock());
     setOpenDialog(false);
   };
 
@@ -155,7 +155,7 @@ export default function StockPage() {
       width: 120,
       renderCell: ({ row }: GridRenderCellParams<string>) => (
         <Stack direction="row">
-          <IconButton aria-label="edit" size="large" onClick={() => {}}>
+          <IconButton aria-label="edit" size="large" onClick={() => {navigate('/stock/edit/' + row.id)}}>
             <EditIcon fontSize="inherit" />
           </IconButton>
           <IconButton
@@ -163,6 +163,7 @@ export default function StockPage() {
             size="large"
             onClick={() => {
               setSelectedProduct(row);
+              setOpenDialog(true)
             }}
           >
             <DeleteIcon fontSize="inherit" />
