@@ -7,7 +7,6 @@ import {
 } from "../Constants";
 import { Product } from "../types/product.type";
 import { httpClient } from "../utils/httpclient";
-import { history } from "../index";
 
 export const setStockFetchingToState = () => ({
   type: STOCK_FETCHING,
@@ -56,10 +55,10 @@ const doGetProducts = async (dispatch: any) => {
   }
 };
 
-export const addProduct = (formData: FormData) => {
+export const addProduct = (formData: FormData, navigate: any) => {
   return async (dispatch: any) => {
     await httpClient.post(server.PRODUCT_URL, formData);
-    history.back();
+    navigate('/')
   };
 };
 

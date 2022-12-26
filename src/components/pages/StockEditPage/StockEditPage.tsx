@@ -15,12 +15,15 @@ import { useDispatch, useSelector } from "react-redux";
 import * as stockEditAction from "../../../actions/stock.edit.action";
 import { RootReducers } from "../../../reducers";
 import { imageUrl } from "../../../Constants";
+import { useNavigate } from "react-router-dom";
 
 const StockEdit: React.FC<any> = () => {
   const dispatch = useDispatch();
   const stockEditReducer = useSelector(
     (state: RootReducers) => state.stockEditReducer
   );
+
+  const navigate = useNavigate();
 
   const match = useMatch("/stock/edit/:id");
   React.useEffect(() => {
@@ -159,7 +162,7 @@ const StockEdit: React.FC<any> = () => {
           if (values.file) {
             formData.append("image", values.file);
           }
-          dispatch(stockEditAction.updateProduct(formData));
+          dispatch(stockEditAction.updateProduct(formData, navigate));
           setSubmitting(false);
         }}
       >

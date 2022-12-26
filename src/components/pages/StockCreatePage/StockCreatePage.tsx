@@ -10,13 +10,13 @@ import {
 } from "@mui/material";
 import { TextField } from "formik-material-ui";
 import { Box } from "@mui/system";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import * as stockActions from "../../../actions/stock.action";
 import { useDispatch } from "react-redux";
 
 const StockCreatePage: React.FC<any> = () => {
   const dispatch = useDispatch();
-
+  const navigate = useNavigate()
   const showPreviewImage = (values: any) => {
     return (
       values.file_obj && <img src={values.file_obj} style={{ height: 100 }} />
@@ -133,7 +133,7 @@ const StockCreatePage: React.FC<any> = () => {
           formData.append("price", String(values.price));
           formData.append("stock", String(values.stock));
           formData.append("image", values.file);
-          dispatch(stockActions.addProduct(formData));
+          dispatch(stockActions.addProduct(formData, navigate));
           setSubmitting(false);
         }}
       >

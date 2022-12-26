@@ -4,7 +4,6 @@ import "./index.css";
 import App from "./App";
 import reportWebVitals from "./reportWebVitals";
 import { BrowserRouter } from "react-router-dom";
-import { createBrowserHistory } from "history";
 import { createStore, applyMiddleware, Middleware } from "redux";
 import thunk from "redux-thunk";
 import { Provider } from "react-redux";
@@ -16,7 +15,6 @@ if (true || process.env.REACT_APP_IS_PRODUCTION !== "1") {
   middlewares.push(logger);
 }
 
-export const history = createBrowserHistory();
 export const store = createStore(reducers, applyMiddleware(...middlewares));
 
 ReactDOM.render(
